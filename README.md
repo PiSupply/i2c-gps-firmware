@@ -1,2 +1,7 @@
 # i2c-gps
-Software &amp; Documentation for I2C GPS Module
+Firmware for Pi Supply GPS Module
+
+This uses the following arduino libraries:
+- Software Serial
+- Tiny GPS Plus
+- Wire

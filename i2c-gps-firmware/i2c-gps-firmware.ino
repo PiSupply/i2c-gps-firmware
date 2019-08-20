@@ -11,7 +11,7 @@
 #include <TinyGPS++.h>
 
 
-byte command = "";
+
 
 //GPS Serial
 SoftwareSerial gpsSerial(10,11);
@@ -20,12 +20,14 @@ SoftwareSerial gpsSerial(10,11);
 TinyGPSPlus gps;
 
 
+
   // Setup the variables used to store Lat, Long, Altitude, fix and hdop
- float latitude;
+  float latitude;
   float longitude;
   float gpsaltitude;
   int fix = 0;
   float gpshdop;
+  byte command = "";
 int counter = 0;
 
 void setup() {
@@ -71,6 +73,7 @@ void loop() {
       }
       if (counter>5000) {
         counter = 0;
+        //Serial.println(gps.altitude.meters());
       }
     
     }
@@ -81,6 +84,14 @@ void loop() {
 }
 
 void returnData() {
+
+    union {
+    float fval;
+    byte bval[4];
+} floatAsBytes;
+
+command = Wire.read();
+
   //Respond to the host
   
   if(command == 0x00) {
@@ -91,11 +102,18 @@ void returnData() {
   
   else if(command == 0x01) {
     //Latitude
+    Serial.println("latitude");
+    floatAsBytes.fval = latitude;
+    Wire.write((byte *)floatAsBytes.bval, 4);
+    
     
     
   }
   else if(command == 0x02) {
     //Longitude
+    Serial.println("longitude");
+    floatAsBytes.fval = longitude;
+    Wire.write((byte *)floatAsBytes.bval, 4);
     
   }
   else if(command == 0x03) {
@@ -115,9 +133,13 @@ void returnData() {
 
 void getCommand() {
   //Respond to the host
-  if(Wire.available()) {
+  if(Wire.available()>0) {
     command = Wire.read();
     Serial.println(command);
   }
 }
+
+
+
+
   

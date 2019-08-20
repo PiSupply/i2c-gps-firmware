@@ -1,3 +1,4 @@
+
 //I2C GPS Firmware
 //By Ryan Walmsley
 //(C) Nebra LTD. T/A Pi Supply
@@ -8,6 +9,9 @@
 #include <Wire.h>
 #include <SoftwareSerial.h> 
 #include <TinyGPS++.h>
+
+
+byte command = "";
 
 //GPS Serial
 SoftwareSerial gpsSerial(10,11);
@@ -27,8 +31,9 @@ int counter = 0;
 void setup() {
  
   // Setup on GPS Bus
-  Wire.begin(42);
+  Wire.begin(66);
   Wire.onRequest(returnData);
+  Wire.onReceive(getCommand);
 
   //Setup the Serial Ports
   gpsSerial.begin(9600);
@@ -65,7 +70,6 @@ void loop() {
         //returnData();
       }
       if (counter>5000) {
-        returnData();
         counter = 0;
       }
     
@@ -78,11 +82,42 @@ void loop() {
 
 void returnData() {
   //Respond to the host
-  Serial.print(latitude,6); 
-  Serial.print(","); 
-  Serial.print(longitude,6); 
-  Serial.print(","); 
-  Serial.print(gpsaltitude); 
-  Serial.print(","); 
-  Serial.println(gpshdop); 
+  
+  if(command == 0x00) {
+      //Fix Status
+      
+      
+    }
+  
+  else if(command == 0x01) {
+    //Latitude
+    
+    
+  }
+  else if(command == 0x02) {
+    //Longitude
+    
+  }
+  else if(command == 0x03) {
+    //Altitude
+    
+  }
+  else if(command == 0x04) {
+    //HDOP
+    
+  }
+  else {
+    //Bad Command
+    Serial.println("Bad Command");
+    
+  }
 }
+
+void getCommand() {
+  //Respond to the host
+  if(Wire.available()) {
+    command = Wire.read();
+    Serial.println(command);
+  }
+}
+  

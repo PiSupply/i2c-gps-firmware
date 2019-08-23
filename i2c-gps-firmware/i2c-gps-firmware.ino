@@ -28,7 +28,7 @@ TinyGPSPlus gps;
   int fix = 0;
   float gpshdop;
   byte command = "";
-int counter = 0;
+  int counter = 0;
 
 void setup() {
  
@@ -71,38 +71,33 @@ void loop() {
         //Serial.print(gps.altitude.meters());
         //returnData();
       }
-      if (counter>5000) {
-        counter = 0;
-        //Serial.println(gps.altitude.meters());
-      }
+     
     
     }
-    counter = counter+1;
 
     
   
 }
 
 void returnData() {
-
     union {
     float fval;
     byte bval[4];
 } floatAsBytes;
 
-command = Wire.read();
 
   //Respond to the host
   
-  if(command == 0x00) {
+  //if(command == 0x00) {
       //Fix Status
+      //Serial.println("fix");
       
       
-    }
+  //  }
   
-  else if(command == 0x01) {
+  if(command == 0x01) {
     //Latitude
-    Serial.println("latitude");
+    //Serial.println("latitude");
     floatAsBytes.fval = latitude;
     Wire.write((byte *)floatAsBytes.bval, 4);
     
@@ -111,17 +106,23 @@ command = Wire.read();
   }
   else if(command == 0x02) {
     //Longitude
-    Serial.println("longitude");
+    //Serial.println("longitude");
     floatAsBytes.fval = longitude;
     Wire.write((byte *)floatAsBytes.bval, 4);
     
   }
   else if(command == 0x03) {
     //Altitude
+    //Serial.println("alt");
+    floatAsBytes.fval = gpsaltitude;
+    Wire.write((byte *)floatAsBytes.bval, 4);
     
   }
   else if(command == 0x04) {
     //HDOP
+    //Serial.println("hdop");
+    floatAsBytes.fval = gpshdop;
+    Wire.write((byte *)floatAsBytes.bval, 4);
     
   }
   else {
@@ -131,12 +132,11 @@ command = Wire.read();
   }
 }
 
-void getCommand() {
-  //Respond to the host
-  if(Wire.available()>0) {
-    command = Wire.read();
-    Serial.println(command);
-  }
+void getCommand(int bytesReceived) {
+    
+  command = Wire.read();
+  Serial.println(command);
+  Wire.read();  
 }
 
 

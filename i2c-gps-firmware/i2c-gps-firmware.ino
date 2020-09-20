@@ -38,6 +38,9 @@ TinyGPSPlus gps;
 void setup() {
  
   // Setup on GPS Bus
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   
   
   Wire.begin(66);
@@ -61,7 +64,9 @@ void loop() {
       gps.encode(gpsSerial.read());
       
       if (gps.location.isValid())
+      
         {
+          digitalWrite(LED_BUILTIN, HIGH);  
           latitude = gps.location.lat();
           longitude = gps.location.lng();
         
